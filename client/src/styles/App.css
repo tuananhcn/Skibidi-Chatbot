@@ -1,0 +1,151 @@
+/* Reset some default browser styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+@font-face {
+  font-family: 'Noto Sans';
+  src: url('@src/assets/fonts/NotoSans/NotoSans.ttf');
+}
+
+:root {
+  --main-background: #343434;
+  --side-background: #1e1e1e;
+  --inner-background: #606060;
+  --item-background: #606060;
+  --light-text: #ffffff;
+  --purple-accent: #ba6cff;
+
+  --sidebar-width: 260px;
+  --sidebar-width-mobile: 90vw;
+  --content-padding: 2rem;
+  --content-padding-mobile: 1rem;
+  --border-radius: 0.5rem;
+  --transition-speed: 0.3s;
+}
+
+/* Overall app */
+.app {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  min-height: 100vh;
+  font-family: 'Noto Sans', serif;
+  background-color: var(--main-background);
+  color: var(--light-text);
+  overflow-x: hidden;
+}
+
+@media (max-width: 768px) {
+  .app {
+    grid-template-columns: 1fr;
+    position: relative;
+  }
+}
+
+/* Sidebar-toggle button */
+.menu-btn {
+  cursor: pointer;
+  z-index: 1000;
+  position: relative;
+}
+
+/* App sidebar */
+.sidebar {
+  width: var(--sidebar-width);
+  padding: var(--content-padding);
+  padding-top: 1rem;
+  background-color: var(--side-background);
+  transition: transform var(--transition-speed) ease;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: var(--sidebar-width-mobile);
+    height: 100vh;
+    padding: var(--content-padding-mobile);
+    padding-top: 1rem;
+    transform: translateX(-100%);
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+}
+
+.sidebar.hidden {
+  transform: translateX(-100%);
+}
+
+@media (min-width: 769px) {
+  .sidebar.hidden {
+    width: 0;
+    padding: 0;
+    overflow: hidden;
+    transform: none;
+  }
+
+  .app:has(.sidebar.hidden) {
+    grid-template-columns: 0 1fr;
+  }
+}
+
+/* Overall chat area */
+.chat-area {
+  padding: var(--content-padding);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--main-background);
+  min-height: 100vh;
+  transition: margin-left var(--transition-speed) ease;
+}
+
+@media (max-width: 768px) {
+  .chat-area {
+    padding: var(--content-padding-mobile);
+    width: 100%;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  :root {
+    --sidebar-width: 240px;
+    --content-padding: 1.5rem;
+  }
+}
+
+@media (min-width: 1400px) {
+  :root {
+    --sidebar-width: 320px;
+    --content-padding: 2.5rem;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --inner-background: #808080;
+    --purple-accent: #c080ff;
+  }
+}

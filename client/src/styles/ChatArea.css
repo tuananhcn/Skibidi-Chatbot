@@ -1,0 +1,189 @@
+/* App header */
+.chat-area-head {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 2rem;
+  position: absolute;
+  top: 1rem;
+  left: var(--content-padding);
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  z-index: 10;
+  width: auto;
+}
+
+@media (max-width: 768px) {
+  .chat-area-head {
+    left: var(--content-padding-mobile);
+    gap: 1rem;
+    font-size: clamp(1.2rem, 5vw, 1.5rem);
+  }
+}
+
+/* Greeting */
+.greeting-container {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.greeting {
+  font-size: clamp(2rem, 6vw, 2.5rem);
+  text-align: center;
+  font-weight: 400;
+}
+
+@media (max-width: 768px) {
+  .greeting {
+    font-size: clamp(1.5rem, 8vw, 2rem);
+    margin-bottom: 1.5rem;
+  }
+}
+
+/* Container for user input */
+.input-container {
+  width: 85%;
+  max-width: 900px;
+  min-width: 300px;
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-sizing: border-box;
+  background-color: #2a2a2a;
+  border-radius: 9999px;
+  padding: 0.45rem 0.55rem 0.45rem 0.75rem;
+  transition: box-shadow 0.2s ease;
+  z-index: 20;
+}
+
+.input-container:focus-within {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.12);
+}
+
+@media (max-width: 768px) {
+  .input-container {
+    width: 95%;
+    min-width: 280px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .input-container {
+    width: 90%;
+    max-width: 700px;
+  }
+}
+
+@media (min-width: 1400px) {
+  .input-container {
+    width: 80%;
+    max-width: 1000px;
+  }
+}
+
+/* User input */
+.chat-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--light-text);
+  font-size: clamp(0.9rem, 2.5vw, 1rem);
+  font-family: inherit;
+  line-height: 1.4;
+  padding: 0.4rem 0.25rem;
+  min-width: 0;
+}
+
+.chat-input::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* Left/right icon buttons (+ and mic) */
+.input-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  padding: 0.4rem;
+  border-radius: 9999px;
+  flex-shrink: 0;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.input-action-btn:hover {
+  color: var(--light-text);
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Right-side action group */
+.input-right-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
+  flex-shrink: 0;
+}
+
+/* Send button — filled circle with waveform icon */
+.send-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  background-color: #ffffff;
+  color: #111111;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.15s ease, background-color 0.15s ease, opacity 0.15s ease;
+}
+
+.send-button:hover {
+  background-color: #e0e0e0;
+  transform: scale(1.06);
+}
+
+.send-button:active {
+  transform: scale(0.94);
+}
+
+.send-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Overall chat area */
+.chat-area {
+  width: 100%;
+  height: 100vh;
+  box-sizing: border-box;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-btn {
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.menu-btn img {
+  height: 2rem;
+  width: auto;
+  display: block;
+}
