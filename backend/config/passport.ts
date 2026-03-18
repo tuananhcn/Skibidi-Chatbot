@@ -29,6 +29,7 @@ passport.use(
       clientID: clientID || 'missing',
       clientSecret: clientSecret || 'missing',
       callbackURL: callbackURL,
+      proxy: true,
     },
     async (
       _accessToken: string,
