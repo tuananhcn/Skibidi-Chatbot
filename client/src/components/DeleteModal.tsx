@@ -34,7 +34,7 @@ const DeleteModal = ({ isOpen, onClose, onConfirm, chatTitle }: DeleteModalProps
         
         <div className="delete-modal-body">
           <p>
-            Are you sure you want to delete <strong>"{chatTitle || 'this chat'}"</strong>? 
+            Are you sure you want to delete <strong>&quot;{chatTitle || 'this chat'}&quot;</strong>? 
           </p>
           <p className="delete-modal-warning">
             This action cannot be undone.

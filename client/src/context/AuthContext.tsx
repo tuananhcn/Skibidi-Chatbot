@@ -18,7 +18,7 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue>({
   user: null,
   isLoading: true,
-  logout: async () => {},
+  logout: () => Promise.resolve(),
 });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {

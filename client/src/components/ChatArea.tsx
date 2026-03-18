@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 import { chatService } from '@src/services/chatService';
-import type { CurrChat } from '@src/types/chat';
+import type { Chat, CurrChat } from '@src/types/chat';
 import MenuButton from './MenuButton';
 import Conversation from './Conversation';
 import '@src/styles/ChatArea.css';
@@ -12,7 +12,7 @@ interface ChatAreaProps {
   setCurrentChat: Dispatch<SetStateAction<CurrChat>>;
   isSidebarOpen: boolean;
   setIsSidebarOpen: Dispatch<SetStateAction<boolean>>;
-  onNewChat?: (chat: any) => void;
+  onNewChat?: (chat: CurrChat | Chat) => void;
 }
 
 const ChatArea = ({
@@ -73,7 +73,7 @@ const ChatArea = ({
         try {
           const updatedChat = await chatService.handlePrompt(currentChat, currentInput);
           setCurrentChat(updatedChat);
-        } catch (apiError: any) {
+        } catch (apiError: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
           const savedChat = apiError?.response?.data?.chat;
           if (savedChat) {
              setCurrentChat(savedChat);
@@ -111,7 +111,7 @@ const ChatArea = ({
           const newChat = await chatService.handlePrompt(null, currentInput);
           setCurrentChat(newChat);
           if (onNewChat) onNewChat(newChat);
-        } catch (apiError: any) {
+        } catch (apiError: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
           const savedChat = apiError?.response?.data?.chat;
           if (savedChat) {
              setCurrentChat(savedChat);
@@ -131,7 +131,7 @@ const ChatArea = ({
           }
         }
       }
-    } catch (error: any) {
+    } catch (error: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
       console.error('(Client) Error calling handlePrompt() API:', error);
     } finally {
       setIsLoading(false);

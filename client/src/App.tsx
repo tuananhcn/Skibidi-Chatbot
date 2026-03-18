@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { chatService } from '@src/services/chatService';
 import type { Chat, CurrChat } from '@src/types/chat';
 import SideBar from '@src/components/SideBar';
@@ -21,7 +21,7 @@ const MainApp = () => {
   );
   const { user } = useAuth();
 
-  const getChats = async () => {
+  const getChats = useCallback(async () => {
     if (!user) return [];
     try {
       return await chatService.getChatHistory();
@@ -29,7 +29,7 @@ const MainApp = () => {
       console.error('(Client) Error calling getChatHistory() API:', error);
       return [];
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     const initializeChats = async () => {
@@ -37,7 +37,7 @@ const MainApp = () => {
       setChats(chatHistory || []);
     };
     void initializeChats();
-  }, [user]);
+  }, [getChats]);
 
   useEffect(() => {
     sessionStorage.setItem('ACTIVE_CHAT', JSON.stringify(activeChat));
@@ -67,9 +67,11 @@ const MainApp = () => {
     }
   };
 
-  const handleNewChat = (newChat: Chat) => {
-    // Add the new chat to the top of the sidebar list
-    setChats((prevChats) => [newChat, ...prevChats]);
+  const handleNewChat = (newChat: Chat | null) => {
+    if (newChat) {
+      // Add the new chat to the top of the sidebar list
+      setChats((prevChats) => [newChat, ...prevChats]);
+    }
   };
 
   const handleDeleteChat = async (chatId: string) => {
