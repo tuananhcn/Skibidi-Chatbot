@@ -56,50 +56,71 @@ const ChatArea = ({
       if (currentChat) {
         // Backup previous state
         const prevMessages = [...currentChat.messages];
-        
+
         // Optimistically add user message and loading state
         // Note: The UI adds the user message here immediately and waits for assistant
-        // Only trigger UI update if we already appended the user text elsewhere, 
+        // Only trigger UI update if we already appended the user text elsewhere,
         // wait, the previous code didn't append the user text to currentChat before adding loading!
         // Actually, looking at the previous code, it only appended 'loading'. The user's prompt was missing from UI until the API returned. Let's fix that too.
-        
-        const tempUserMessage = { id: uuidv4(), role: 'user' as const, content: currentInput };
+
+        const tempUserMessage = {
+          id: uuidv4(),
+          role: 'user' as const,
+          content: currentInput,
+        };
         setCurrentChat({
           ...currentChat,
-          messages: [...prevMessages, tempUserMessage, { id: 'loading', role: 'assistant' as const, content: '...' }],
+          messages: [
+            ...prevMessages,
+            tempUserMessage,
+            { id: 'loading', role: 'assistant' as const, content: '...' },
+          ],
         });
 
         // Call API
         try {
-          const updatedChat = await chatService.handlePrompt(currentChat, currentInput);
+          const updatedChat = await chatService.handlePrompt(
+            currentChat,
+            currentInput
+          );
           setCurrentChat(updatedChat);
-        } catch (apiError: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
+        } catch (apiError: any) {
+          // eslint-disable-line @typescript-eslint/no-explicit-any
           const savedChat = apiError?.response?.data?.chat;
           if (savedChat) {
-             setCurrentChat(savedChat);
+            setCurrentChat(savedChat);
           } else {
-             // Fallback if backend didn't return a chat object
-            const errorMsg = apiError?.response?.data?.error || 'Failed to get a response from the server.';
+            // Fallback if backend didn't return a chat object
+            const errorMsg =
+              apiError?.response?.data?.error ||
+              'Failed to get a response from the server.';
             setCurrentChat({
               ...currentChat,
               messages: [
                 ...prevMessages,
                 tempUserMessage,
-                { id: uuidv4(), role: 'assistant' as const, content: `**Error:** ${errorMsg}` }
-              ]
+                {
+                  id: uuidv4(),
+                  role: 'assistant' as const,
+                  content: `**Error:** ${errorMsg}`,
+                },
+              ],
             });
           }
         }
-
       } else {
         // New Chat Flow
         const tempId = uuidv4();
-        const tempUserMessage = { id: uuidv4(), role: 'user' as const, content: currentInput };
+        const tempUserMessage = {
+          id: uuidv4(),
+          role: 'user' as const,
+          content: currentInput,
+        };
         const initialMessages = [
           tempUserMessage,
           { id: 'loading', role: 'assistant' as const, content: '...' },
         ];
-        
+
         setCurrentChat({
           id: tempId,
           userId: '',
@@ -111,27 +132,35 @@ const ChatArea = ({
           const newChat = await chatService.handlePrompt(null, currentInput);
           setCurrentChat(newChat);
           if (onNewChat) onNewChat(newChat);
-        } catch (apiError: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
+        } catch (apiError: any) {
+          // eslint-disable-line @typescript-eslint/no-explicit-any
           const savedChat = apiError?.response?.data?.chat;
           if (savedChat) {
-             setCurrentChat(savedChat);
-             if (onNewChat) onNewChat(savedChat);
+            setCurrentChat(savedChat);
+            if (onNewChat) onNewChat(savedChat);
           } else {
             // Show error in chat instead of alert
-            const errorMsg = apiError?.response?.data?.error || 'Failed to get a response from the server.';
+            const errorMsg =
+              apiError?.response?.data?.error ||
+              'Failed to get a response from the server.';
             setCurrentChat({
               id: tempId,
               userId: '',
               title: 'Failed Chat',
               messages: [
                 tempUserMessage,
-                { id: uuidv4(), role: 'assistant' as const, content: `**Error:** ${errorMsg}` }
-              ]
+                {
+                  id: uuidv4(),
+                  role: 'assistant' as const,
+                  content: `**Error:** ${errorMsg}`,
+                },
+              ],
             });
           }
         }
       }
-    } catch (error: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       console.error('(Client) Error calling handlePrompt() API:', error);
     } finally {
       setIsLoading(false);
@@ -190,7 +219,13 @@ const ChatArea = ({
             disabled={isLoading}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-              <path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path
+                d="M12 19V5M5 12l7-7 7 7"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </button>
         </div>

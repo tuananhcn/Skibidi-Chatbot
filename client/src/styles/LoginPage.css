@@ -68,7 +68,10 @@
   text-decoration: none;
   border: none;
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  transition:
+    background 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
 }
 
@@ -118,5 +121,7 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }

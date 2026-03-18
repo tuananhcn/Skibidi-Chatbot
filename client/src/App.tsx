@@ -77,7 +77,7 @@ const MainApp = () => {
   const handleDeleteChat = async (chatId: string) => {
     try {
       await chatService.deleteChat(chatId);
-      setChats((prevChats) => prevChats.filter(chat => chat.id !== chatId));
+      setChats((prevChats) => prevChats.filter((chat) => chat.id !== chatId));
       if (activeChat?.id === chatId) {
         setActiveChat(null);
       }
@@ -90,7 +90,9 @@ const MainApp = () => {
   return (
     <>
       <ProtectedRoute>
-        <div className={`app${isMobile && isSidebarOpen ? ' sidebar-open' : ''}`}>
+        <div
+          className={`app${isMobile && isSidebarOpen ? ' sidebar-open' : ''}`}
+        >
           {(!isMobile || isSidebarOpen) && (
             <div className={`sidebar${isSidebarOpen ? '' : ' hidden'}`}>
               <SideBar

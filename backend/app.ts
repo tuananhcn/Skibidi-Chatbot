@@ -97,7 +97,12 @@ if (process.env.MONGO_URI) {
 app.use(passport.initialize());
 app.use(passport.session());
 
-console.log('Backend initialized. Registered strategies:', (passport as any)._strategies ? Object.keys((passport as any)._strategies) : 'none');
+console.log(
+  'Backend initialized. Registered strategies:',
+  (passport as any)._strategies
+    ? Object.keys((passport as any)._strategies)
+    : 'none'
+);
 
 // Global error handler
 app.use(
