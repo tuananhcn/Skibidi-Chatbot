@@ -84,8 +84,10 @@ const ChatArea = ({
             currentInput
           );
           setCurrentChat(updatedChat);
-        } catch (apiError: any) {
-          // eslint-disable-line @typescript-eslint/no-explicit-any
+        } catch (error: unknown) {
+          const apiError = error as {
+            response?: { data?: { chat?: Chat; error?: string } };
+          };
           const savedChat = apiError?.response?.data?.chat;
           if (savedChat) {
             setCurrentChat(savedChat);
@@ -132,8 +134,10 @@ const ChatArea = ({
           const newChat = await chatService.handlePrompt(null, currentInput);
           setCurrentChat(newChat);
           if (onNewChat) onNewChat(newChat);
-        } catch (apiError: any) {
-          // eslint-disable-line @typescript-eslint/no-explicit-any
+        } catch (error: unknown) {
+          const apiError = error as {
+            response?: { data?: { chat?: Chat; error?: string } };
+          };
           const savedChat = apiError?.response?.data?.chat;
           if (savedChat) {
             setCurrentChat(savedChat);
@@ -159,8 +163,7 @@ const ChatArea = ({
           }
         }
       }
-    } catch (error: any) {
-      // eslint-disable-line @typescript-eslint/no-explicit-any
+    } catch (error: unknown) {
       console.error('(Client) Error calling handlePrompt() API:', error);
     } finally {
       setIsLoading(false);
