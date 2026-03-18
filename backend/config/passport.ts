@@ -9,18 +9,17 @@ import { IUser } from '../types/user.js';
 
 const clientID = process.env.GOOGLE_CLIENT_ID;
 const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-const backendUrl = process.env.BACKEND_URL;
 
-const callbackURL = backendUrl
-  ? `${backendUrl}/api/auth/google/callback`
-  : '/api/auth/google/callback';
+// Use a relative URL for the callback. With proxy: true and trust proxy: 1,
+// Passport will automatically prefix this with the correct protocol and domain.
+const callbackURL = '/api/auth/google/callback';
 
-console.log(`Configuring Google Strategy with callback: ${callbackURL}`);
+console.log(
+  `Configuring Google Strategy with relative callback: ${callbackURL}`
+);
 
-if (!clientID || !clientSecret || !backendUrl) {
-  console.error(
-    'CRITICAL: Google OAuth credentials or BACKEND_URL missing in passport.ts'
-  );
+if (!clientID || !clientSecret) {
+  console.error('CRITICAL: Google OAuth credentials missing in passport.ts');
 }
 
 passport.use(
