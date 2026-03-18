@@ -1,17 +1,18 @@
-import { Request, Response } from 'express';
+import express from 'express';
+import 'passport';
 import { nanoid } from 'nanoid';
 import { IMessage } from '../types/chat.js';
 import { IUser } from '../types/user.js';
 import Chat from '../models/Chat.js';
 import openai from '../config/open-ai.js';
 
-const getUserId = (req: Request): string | null => {
+const getUserId = (req: express.Request): string | null => {
   if (!req.isAuthenticated() || !req.user) return null;
   return (req.user as IUser)._id.toString();
 };
 
 const chatController = {
-  getChatHistory: async (req: Request, res: Response) => {
+  getChatHistory: async (req: express.Request, res: express.Response) => {
     const userId = getUserId(req);
     if (!userId) return res.status(401).json({ error: 'Unauthorized.' });
 
@@ -24,7 +25,7 @@ const chatController = {
     }
   },
 
-  handlePrompt: async (req: Request, res: Response) => {
+  handlePrompt: async (req: express.Request, res: express.Response) => {
     const userId = getUserId(req);
     if (!userId) return res.status(401).json({ error: 'Unauthorized.' });
 
@@ -129,7 +130,7 @@ const chatController = {
     }
   },
 
-  updateChatTitle: async (req: Request, res: Response) => {
+  updateChatTitle: async (req: express.Request, res: express.Response) => {
     const userId = getUserId(req);
     if (!userId) return res.status(401).json({ error: 'Unauthorized.' });
 
@@ -159,7 +160,7 @@ const chatController = {
     }
   },
 
-  deleteChat: async (req: Request, res: Response) => {
+  deleteChat: async (req: express.Request, res: express.Response) => {
     const userId = getUserId(req);
     if (!userId) return res.status(401).json({ error: 'Unauthorized.' });
 

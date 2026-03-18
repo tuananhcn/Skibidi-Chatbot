@@ -1,5 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
+import express from 'express';
 import passport from 'passport';
+import 'passport'; // Force Passport type augmentations
 import { IUser } from '../types/user.js';
 
 const authController = {
@@ -11,7 +12,7 @@ const authController = {
   // Handles the Google OAuth callback
   googleCallback: [
     passport.authenticate('google', { failureRedirect: '/login' }),
-    (_req: Request, res: Response) => {
+    (_req: express.Request, res: express.Response) => {
       // Redirect to the frontend after successful login
       res.redirect(
         process.env.PROD_URL ||
@@ -22,7 +23,7 @@ const authController = {
   ],
 
   // Returns the currently authenticated user
-  getMe: (req: Request, res: Response) => {
+  getMe: (req: express.Request, res: express.Response) => {
     if (!req.isAuthenticated() || !req.user) {
       return res.json({ user: null });
     }
@@ -38,12 +39,12 @@ const authController = {
   },
 
   // Logs the user out and destroys the session
-  logout: (req: Request, res: Response, next: NextFunction) => {
-    req.logout((err) => {
-      if (err) return next(err);
+  logout: (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    req.logout((err: any) => {
+      if (err) return (next as any)(err);
       // express-session augments req.session with .destroy()
       const s = (
-        req as Request & { session: { destroy: (cb: () => void) => void } }
+        req as unknown as express.Request & { session: { destroy: (cb: () => void) => void } }
       ).session;
       s.destroy(() => {
         res.json({ success: true });
