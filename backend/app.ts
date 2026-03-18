@@ -54,6 +54,7 @@ const allowedOrigins = [
   process.env.CUSTOM_URL,
   process.env.PREVIEW_URL,
   process.env.PROD_URL,
+  process.env.VITE_API_URL, // Explicitly add known Vercel URL
 ].filter(Boolean) as string[];
 
 app.use(compression());
@@ -114,7 +115,11 @@ console.log(
     : 'none'
 );
 
-// Global error handler
+// API Endpoints
+app.use('/api/auth', authRoutes);
+app.use('/api/chat', chatRoutes);
+
+// Global error handler (MUST BE AFTER ROUTES)
 app.use(
   (
     err: Error,
@@ -123,23 +128,20 @@ app.use(
     next: express.NextFunction
   ) => {
     const s = res as any;
+    console.error('[Error Handler] Caught error:', err.message);
     console.error(err.stack);
     s.status(500).json({
       status: 'error',
-      message: '(Server) Something went wrong!',
+      message: `(Server) ${err.message || 'Something went wrong!'}`,
     });
   }
 );
-
-// API Endpoints
-app.use('/api/auth', authRoutes);
-app.use('/api/chat', chatRoutes);
 
 /*******************
  * Run Application *
  *******************/
 
-connectDB();
+// Application is ready (Middleware handles connectDB)
 
 // Only listen locally, Vercel Serverless handles its own listening
 if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {

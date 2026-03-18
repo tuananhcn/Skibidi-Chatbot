@@ -84,7 +84,7 @@ const chatController = {
         });
       }
 
-      const messagesForAssistant = chatDoc.messages.map((msg) => ({
+      const messagesForAssistant = chatDoc.messages.map((msg: any) => ({
         role: msg.role,
         content: msg.content,
       }));
