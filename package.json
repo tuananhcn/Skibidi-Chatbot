@@ -1,0 +1,10 @@
+{
+  "name": "skibidi-chatbot-monorepo",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
