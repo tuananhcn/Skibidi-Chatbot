@@ -18,7 +18,7 @@ dotenv.config();
 const app = express();
 
 // Basic request logger
-app.use((req, _res, next) => {
+app.use((req: any, _res: any, next: any) => {
   console.log(`[Request] ${req.method} ${req.url}`);
   next();
 });

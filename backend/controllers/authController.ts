@@ -13,15 +13,26 @@ const authController = {
 
   // Handles the Google OAuth callback
   googleCallback: [
-    passport.authenticate('google', { failureRedirect: '/login' }),
+    (req: any, res: any, next: any) => {
+      const isProduction =
+        process.env.NODE_ENV === 'production' || process.env.VERCEL;
+      const failureRedirect = isProduction
+        ? '/login'
+        : 'http://localhost:5173/login';
+
+      passport.authenticate('google', {
+        failureRedirect: failureRedirect,
+      })(req, res, next);
+    },
     (_req: express.Request, res: express.Response) => {
       const s = res as any;
+      const isProduction =
+        process.env.NODE_ENV === 'production' || process.env.VERCEL;
+      const redirectUrl = isProduction ? '/' : 'http://localhost:5173';
+
+      console.log(`[OAuth] Success! Redirecting to: ${redirectUrl}`);
       // Redirect to the frontend after successful login
-      s.redirect(
-        process.env.PROD_URL ||
-          process.env.PREVIEW_URL ||
-          'http://localhost:5173'
-      );
+      s.redirect(redirectUrl);
     },
   ],
 
