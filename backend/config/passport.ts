@@ -11,6 +11,12 @@ const clientID = process.env.GOOGLE_CLIENT_ID;
 const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
 const backendUrl = process.env.BACKEND_URL;
 
+const callbackURL = backendUrl
+  ? `${backendUrl}/api/auth/google/callback`
+  : '/api/auth/google/callback';
+
+console.log(`Configuring Google Strategy with callback: ${callbackURL}`);
+
 if (!clientID || !clientSecret || !backendUrl) {
   console.error(
     'CRITICAL: Google OAuth credentials or BACKEND_URL missing in passport.ts'
@@ -22,9 +28,7 @@ passport.use(
     {
       clientID: clientID || 'missing',
       clientSecret: clientSecret || 'missing',
-      callbackURL: backendUrl
-        ? `${backendUrl}/api/auth/google/callback`
-        : '/api/auth/google/callback',
+      callbackURL: callbackURL,
     },
     async (
       _accessToken: string,

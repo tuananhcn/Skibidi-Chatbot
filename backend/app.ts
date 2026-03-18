@@ -17,6 +17,12 @@ dotenv.config();
 
 const app = express();
 
+// Basic request logger
+app.use((req, _res, next) => {
+  console.log(`[Request] ${req.method} ${req.url}`);
+  next();
+});
+
 // Validate required environment variables
 const requiredEnv = [
   'MONGO_URI',
@@ -90,6 +96,8 @@ if (process.env.MONGO_URI) {
 // Passport authentication
 app.use(passport.initialize());
 app.use(passport.session());
+
+console.log('Backend initialized. Registered strategies:', (passport as any)._strategies ? Object.keys((passport as any)._strategies) : 'none');
 
 // Global error handler
 app.use(
