@@ -9,37 +9,41 @@ import Chat from '../models/Chat.js';
 import openai from '../config/open-ai.js';
 
 const getUserId = (req: express.Request): string | null => {
-  if (!(req as any).isAuthenticated() || !req.user) return null;
-  return (req.user as IUser)._id.toString();
+  const q = req as any;
+  if (!q.isAuthenticated() || !q.user) return null;
+  return (q.user as IUser)._id.toString();
 };
 
 const chatController = {
   getChatHistory: async (req: express.Request, res: express.Response) => {
+    const s = res as any;
     const userId = getUserId(req);
     if (!userId) {
-      return (res as any).status(401).json({ error: 'Unauthorized.' });
+      return s.status(401).json({ error: 'Unauthorized.' });
     }
 
     try {
       const chats = await Chat.find({ userId }).sort({ updatedAt: -1 });
-      return (res as any).json({ chatHistory: chats });
+      return s.json({ chatHistory: chats });
     } catch (error) {
       console.error('(Server) Error getting chat history:', error);
-      return (res as any).status(500).json({ error: 'Failed to get chat history.' });
+      return s.status(500).json({ error: 'Failed to get chat history.' });
     }
   },
 
   handlePrompt: async (req: express.Request, res: express.Response) => {
+    const q = req as any;
+    const s = res as any;
     const userId = getUserId(req);
     if (!userId) {
-      return (res as any).status(401).json({ error: 'Unauthorized.' });
+      return s.status(401).json({ error: 'Unauthorized.' });
     }
 
     try {
-      const { chat, prompt } = (req as any).body;
+      const { chat, prompt } = q.body;
 
       if (!prompt || typeof prompt !== 'string') {
-        return (res as any)
+        return s
           .status(400)
           .json({ error: '(Server) Prompt is required and must be a string.' });
       }
@@ -64,7 +68,7 @@ const chatController = {
         }
 
         if (!chatDoc) {
-          return res
+          return s
             .status(404)
             .json({ error: '(Server) Chat not found for this user.' });
         }
@@ -106,7 +110,7 @@ const chatController = {
         chatDoc.messages.push(assistantMessage);
         await chatDoc.save();
 
-        return res.json({ chat: chatDoc });
+        return s.json({ chat: chatDoc });
       } catch (openaiError: any) {
         console.error('(Server) OpenAI API error:', openaiError);
 
@@ -125,35 +129,37 @@ const chatController = {
         chatDoc.messages.push(errorAssistantMessage);
         await chatDoc.save();
 
-        return res.status(503).json({
+        return s.status(503).json({
           error: errorMessage,
           chat: chatDoc,
         });
       }
     } catch (error) {
       console.error('(Server) Error handling user prompt:', error);
-      return res.status(500).json({ error: 'Failed to process user prompt.' });
+      return s.status(500).json({ error: 'Failed to process user prompt.' });
     }
   },
 
   updateChatTitle: async (req: express.Request, res: express.Response) => {
+    const q = req as any;
+    const s = res as any;
     const userId = getUserId(req);
     if (!userId) {
-      return (res as any).status(401).json({ error: 'Unauthorized.' });
+      return s.status(401).json({ error: 'Unauthorized.' });
     }
 
     try {
-      const { chatId, title } = (req as any).body;
+      const { chatId, title } = q.body;
 
       if (!title || typeof title !== 'string') {
-        return (res as any)
+        return s
           .status(400)
           .json({ error: '(Server) Title is required and must be a string.' });
       }
 
       const chatDoc = await Chat.findOne({ id: chatId, userId });
       if (!chatDoc) {
-        return (res as any)
+        return s
           .status(404)
           .json({ error: '(Server) Chat not found for this user.' });
       }
@@ -161,37 +167,39 @@ const chatController = {
       chatDoc.title = title;
       await chatDoc.save();
 
-      return (res as any).json({ chat: chatDoc });
+      return s.json({ chat: chatDoc });
     } catch (error) {
       console.error('(Server) Error updating chat title:', error);
-      return (res as any).status(500).json({ error: 'Failed to update chat title.' });
+      return s.status(500).json({ error: 'Failed to update chat title.' });
     }
   },
 
   deleteChat: async (req: express.Request, res: express.Response) => {
+    const q = req as any;
+    const s = res as any;
     const userId = getUserId(req);
     if (!userId) {
-      return (res as any).status(401).json({ error: 'Unauthorized.' });
+      return s.status(401).json({ error: 'Unauthorized.' });
     }
 
     try {
-      const { id } = (req as any).params;
+      const { id } = q.params;
 
       if (!id || typeof id !== 'string') {
-        return (res as any).status(400).json({ error: '(Server) Chat ID is required.' });
+        return s.status(400).json({ error: '(Server) Chat ID is required.' });
       }
 
       const deletedChat = await Chat.findOneAndDelete({ id, userId });
       if (!deletedChat) {
-        return (res as any)
+        return s
           .status(404)
           .json({ error: '(Server) Chat not found for this user.' });
       }
 
-      return (res as any).json({ message: 'Chat deleted successfully.', id });
+      return s.json({ message: 'Chat deleted successfully.', id });
     } catch (error) {
       console.error('(Server) Error deleting chat:', error);
-      return (res as any).status(500).json({ error: 'Failed to delete chat.' });
+      return s.status(500).json({ error: 'Failed to delete chat.' });
     }
   },
 };

@@ -15,8 +15,9 @@ const authController = {
   googleCallback: [
     passport.authenticate('google', { failureRedirect: '/login' }),
     (_req: express.Request, res: express.Response) => {
+      const s = res as any;
       // Redirect to the frontend after successful login
-      res.redirect(
+      s.redirect(
         process.env.PROD_URL ||
           process.env.PREVIEW_URL ||
           'http://localhost:5173'
@@ -26,11 +27,13 @@ const authController = {
 
   // Returns the currently authenticated user
   getMe: (req: express.Request, res: express.Response) => {
-    if (!(req as any).isAuthenticated() || !req.user) {
-      return (res as any).json({ user: null });
+    const q = req as any;
+    const s = res as any;
+    if (!q.isAuthenticated() || !q.user) {
+      return s.json({ user: null });
     }
-    const user = req.user as IUser;
-    return (res as any).json({
+    const user = q.user as IUser;
+    return s.json({
       user: {
         id: user._id,
         name: user.name,
@@ -46,17 +49,19 @@ const authController = {
     res: express.Response,
     next: express.NextFunction
   ) => {
-    req.logout((err: any) => {
+    const q = req as any;
+    const s = res as any;
+    q.logout((err: any) => {
       if (err) return (next as any)(err);
       // express-session augments req.session with .destroy()
-      const s = (
-        req as unknown as express.Request & {
-          session: { destroy: (cb: () => void) => void };
-        }
-      ).session;
-      s.destroy(() => {
-        (res as any).json({ success: true });
-      });
+      const sess = q.session;
+      if (sess && sess.destroy) {
+        sess.destroy(() => {
+          s.json({ success: true });
+        });
+      } else {
+        s.json({ success: true });
+      }
     });
   },
 };

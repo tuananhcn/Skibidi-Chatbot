@@ -76,8 +76,9 @@ app.use(
     res: express.Response,
     next: express.NextFunction
   ) => {
+    const s = res as any;
     console.error(err.stack);
-    (res as any).status(500).json({
+    s.status(500).json({
       status: 'error',
       message: '(Server) Something went wrong!',
     });
