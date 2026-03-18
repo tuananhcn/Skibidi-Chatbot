@@ -17,6 +17,16 @@ dotenv.config();
 
 const app = express();
 
+// Database connection middleware (ensures DB is ready for every request)
+app.use(async (req: any, _res: any, next: any) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
+
 // Basic request logger
 app.use((req: any, _res: any, next: any) => {
   console.log(`[Request] ${req.method} ${req.url}`);

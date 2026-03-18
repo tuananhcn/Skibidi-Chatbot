@@ -3,13 +3,29 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+let isConnected = false;
+
 const connectDB = async () => {
+  if (isConnected) {
+    console.log('Using existing MongoDB connection');
+    return;
+  }
+
+  // Double check mongoose connection state
+  if (mongoose.connection.readyState >= 1) {
+    isConnected = true;
+    console.log('Mongoose already connected');
+    return;
+  }
+
   if (!process.env.MONGO_URI) {
     console.error('MONGO_URI is missing from environment variables');
     return;
   }
+
   try {
     const conn = await mongoose.connect(process.env.MONGO_URI);
+    isConnected = !!conn.connections[0].readyState;
     console.log('MongoDB Connected');
   } catch (error) {
     console.error('MongoDB connection failed:', error);
