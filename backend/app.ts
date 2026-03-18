@@ -1,5 +1,6 @@
+/// <reference types="express" />
+/// <reference types="passport" />
 import express from 'express';
-import type { Request, Response, NextFunction } from 'express';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import compression from 'compression';
@@ -67,7 +68,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Global error handler
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error(err.stack);
   res.status(500).json({
     status: 'error',

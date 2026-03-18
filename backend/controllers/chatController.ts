@@ -1,3 +1,5 @@
+/// <reference types="express" />
+/// <reference types="passport" />
 import express from 'express';
 import 'passport';
 import { nanoid } from 'nanoid';
