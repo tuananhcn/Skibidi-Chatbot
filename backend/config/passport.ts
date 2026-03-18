@@ -1,5 +1,9 @@
 import passport from 'passport';
-import { Strategy as GoogleStrategy, Profile, VerifyCallback } from 'passport-google-oauth20';
+import {
+  Strategy as GoogleStrategy,
+  Profile,
+  VerifyCallback,
+} from 'passport-google-oauth20';
 import User from '../models/User.js';
 import { IUser } from '../types/user.js';
 
@@ -10,7 +14,12 @@ passport.use(
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
       callbackURL: `${process.env.BACKEND_URL}/api/auth/google/callback`,
     },
-    async (_accessToken: string, _refreshToken: string, profile: Profile, done: VerifyCallback) => {
+    async (
+      _accessToken: string,
+      _refreshToken: string,
+      profile: Profile,
+      done: VerifyCallback
+    ) => {
       try {
         let user = await User.findOne({ googleId: profile.id });
 

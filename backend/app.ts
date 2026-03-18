@@ -2,6 +2,7 @@
 /// <reference types="passport" />
 import express from 'express';
 import session from 'express-session';
+import 'express-session'; // Explicitly load session types
 import MongoStore from 'connect-mongo';
 import compression from 'compression';
 import cors from 'cors';
@@ -68,13 +69,20 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Global error handler
-app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error(err.stack);
-  res.status(500).json({
-    status: 'error',
-    message: '(Server) Something went wrong!',
-  });
-});
+app.use(
+  (
+    err: Error,
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    console.error(err.stack);
+    (res as any).status(500).json({
+      status: 'error',
+      message: '(Server) Something went wrong!',
+    });
+  }
+);
 
 // API Endpoints
 app.use('/api/auth', authRoutes);

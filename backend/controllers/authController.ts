@@ -26,11 +26,11 @@ const authController = {
 
   // Returns the currently authenticated user
   getMe: (req: express.Request, res: express.Response) => {
-    if (!req.isAuthenticated() || !req.user) {
-      return res.json({ user: null });
+    if (!(req as any).isAuthenticated() || !req.user) {
+      return (res as any).json({ user: null });
     }
     const user = req.user as IUser;
-    return res.json({
+    return (res as any).json({
       user: {
         id: user._id,
         name: user.name,
@@ -41,15 +41,21 @@ const authController = {
   },
 
   // Logs the user out and destroys the session
-  logout: (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  logout: (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
     req.logout((err: any) => {
       if (err) return (next as any)(err);
       // express-session augments req.session with .destroy()
       const s = (
-        req as unknown as express.Request & { session: { destroy: (cb: () => void) => void } }
+        req as unknown as express.Request & {
+          session: { destroy: (cb: () => void) => void };
+        }
       ).session;
       s.destroy(() => {
-        res.json({ success: true });
+        (res as any).json({ success: true });
       });
     });
   },
