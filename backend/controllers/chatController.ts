@@ -6,7 +6,7 @@ import { nanoid } from 'nanoid';
 import { IMessage } from '../types/chat.js';
 import { IUser } from '../types/user.js';
 import Chat from '../models/Chat.js';
-import openai from '../config/open-ai.js';
+import { model as geminiModel } from '../config/gemini.js';
 
 const getUserId = (req: express.Request): string | null => {
   const q = req as any;
@@ -89,41 +89,47 @@ const chatController = {
         content: msg.content,
       }));
 
-      // Generate assistant response
+      // Generate assistant response via Gemini
       try {
-        const completion = await openai.chat.completions.create({
-          model: 'gpt-4o-mini',
-          messages: messagesForAssistant,
+        // Map history to Gemini format (user/model)
+        // Gemini expects 'user' and 'model' (not assistant)
+        const history = messagesForAssistant.slice(0, -1).map((m: any) => ({
+          role: m.role === 'assistant' ? 'model' : 'user',
+          parts: [{ text: m.content }],
+        }));
+
+        const chatSession = geminiModel.startChat({
+          history: history,
         });
 
-        const completionText = completion.choices[0].message.content;
-        if (!completionText) {
-          throw new Error('(Server) No response from the model.');
+        const result = await chatSession.sendMessage(prompt);
+        const responseText = result.response.text();
+
+        if (!responseText) {
+          throw new Error('(Server) No response from Gemini.');
         }
 
         const assistantMessage: IMessage = {
           id: nanoid(),
           role: 'assistant',
-          content: completionText,
+          content: responseText,
         };
 
         chatDoc.messages.push(assistantMessage);
         await chatDoc.save();
 
         return s.json({ chat: chatDoc });
-      } catch (openaiError: any) {
-        console.error('(Server) OpenAI API error:', openaiError);
+      } catch (geminiError: any) {
+        console.error('(Server) Gemini API error:', geminiError);
 
-        // Save the error as an assistant message so the chat isn't lost
         const errorMessage =
-          openaiError?.response?.data?.error?.message ||
-          openaiError.message ||
+          geminiError.message ||
           'Failed to generate AI response. Please try again.';
 
         const errorAssistantMessage: IMessage = {
           id: nanoid(),
           role: 'assistant',
-          content: `**API Error:** ${errorMessage}`,
+          content: `**AI Error:** ${errorMessage}`,
         };
 
         chatDoc.messages.push(errorAssistantMessage);

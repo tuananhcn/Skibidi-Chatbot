@@ -39,6 +39,7 @@ const requiredEnv = [
   'SESSION_SECRET',
   'GOOGLE_CLIENT_ID',
   'GOOGLE_CLIENT_SECRET',
+  'GEMINI_API_KEY',
 ];
 requiredEnv.forEach((name) => {
   if (!process.env[name]) {
