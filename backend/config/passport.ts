@@ -7,12 +7,24 @@ import {
 import User from '../models/User.js';
 import { IUser } from '../types/user.js';
 
+const clientID = process.env.GOOGLE_CLIENT_ID;
+const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+const backendUrl = process.env.BACKEND_URL;
+
+if (!clientID || !clientSecret || !backendUrl) {
+  console.error(
+    'CRITICAL: Google OAuth credentials or BACKEND_URL missing in passport.ts'
+  );
+}
+
 passport.use(
   new GoogleStrategy(
     {
-      clientID: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-      callbackURL: `${process.env.BACKEND_URL}/api/auth/google/callback`,
+      clientID: clientID || 'missing',
+      clientSecret: clientSecret || 'missing',
+      callbackURL: backendUrl
+        ? `${backendUrl}/api/auth/google/callback`
+        : '/api/auth/google/callback',
     },
     async (
       _accessToken: string,

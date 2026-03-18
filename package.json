@@ -1,6 +1,7 @@
 {
   "name": "skibidi-chatbot-monorepo",
   "private": true,
+  "type": "module",
   "engines": {
     "node": ">=20"
   },

@@ -17,19 +17,28 @@ dotenv.config();
 
 const app = express();
 
+// Validate required environment variables
+const requiredEnv = [
+  'MONGO_URI',
+  'SESSION_SECRET',
+  'GOOGLE_CLIENT_ID',
+  'GOOGLE_CLIENT_SECRET',
+];
+requiredEnv.forEach((name) => {
+  if (!process.env[name]) {
+    console.error(`CRITICAL: Environment variable ${name} is missing!`);
+  }
+});
+
 app.set('trust proxy', 1);
 
-// CORS config based on environment
+// ... (CORS config remains same) ...
 const allowedOrigins = [
   'http://localhost:5173',
   process.env.CUSTOM_URL,
   process.env.PREVIEW_URL,
   process.env.PROD_URL,
 ].filter(Boolean) as string[];
-
-/************************
- * App Middleware Setup *
- ************************/
 
 app.use(compression());
 
@@ -46,23 +55,37 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Session (must be before passport)
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET as string,
-    resave: false,
-    saveUninitialized: false,
-    store: MongoStore.create({
-      mongoUrl: process.env.MONGO_URI as string,
-      collectionName: 'sessions',
-    }),
-    cookie: {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    },
-  })
-);
+if (process.env.MONGO_URI) {
+  app.use(
+    session({
+      secret: (process.env.SESSION_SECRET as string) || 'fallback-secret-bad',
+      resave: false,
+      saveUninitialized: false,
+      store: MongoStore.create({
+        mongoUrl: process.env.MONGO_URI as string,
+        collectionName: 'sessions',
+      }),
+      cookie: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      },
+    })
+  );
+} else {
+  console.warn(
+    'Running without persistent sessions because MONGO_URI is missing.'
+  );
+  app.use(
+    session({
+      secret: (process.env.SESSION_SECRET as string) || 'fallback-secret-bad',
+      resave: false,
+      saveUninitialized: false,
+      cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 },
+    })
+  );
+}
 
 // Passport authentication
 app.use(passport.initialize());
