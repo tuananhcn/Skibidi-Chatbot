@@ -1,5 +1,6 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
 import session from 'express-session';
+import MongoStore from 'connect-mongo';
 import compression from 'compression';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -47,6 +48,10 @@ app.use(
     secret: process.env.SESSION_SECRET as string,
     resave: false,
     saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGO_URI as string,
+      collectionName: 'sessions',
+    }),
     cookie: {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -79,14 +84,18 @@ app.use('/api/chat', chatRoutes);
 
 connectDB();
 
-// Start server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+// Only listen locally, Vercel Serverless handles its own listening
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+  });
+}
 
 // App shutdown
 process.on('SIGINT', async () => {
   await closeDB();
   process.exit(0);
 });
+
+export default app;

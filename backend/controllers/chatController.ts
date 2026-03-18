@@ -102,24 +102,25 @@ const chatController = {
         return res.json({ chat: chatDoc });
       } catch (openaiError: any) {
         console.error('(Server) OpenAI API error:', openaiError);
-        
+
         // Save the error as an assistant message so the chat isn't lost
-        const errorMessage = openaiError?.response?.data?.error?.message 
-          || openaiError.message 
-          || 'Failed to generate AI response. Please try again.';
-          
+        const errorMessage =
+          openaiError?.response?.data?.error?.message ||
+          openaiError.message ||
+          'Failed to generate AI response. Please try again.';
+
         const errorAssistantMessage: IMessage = {
           id: nanoid(),
           role: 'assistant',
           content: `**API Error:** ${errorMessage}`,
         };
-        
+
         chatDoc.messages.push(errorAssistantMessage);
         await chatDoc.save();
 
         return res.status(503).json({
           error: errorMessage,
-          chat: chatDoc
+          chat: chatDoc,
         });
       }
     } catch (error) {
@@ -166,9 +167,7 @@ const chatController = {
       const { id } = req.params;
 
       if (!id || typeof id !== 'string') {
-        return res
-          .status(400)
-          .json({ error: '(Server) Chat ID is required.' });
+        return res.status(400).json({ error: '(Server) Chat ID is required.' });
       }
 
       const deletedChat = await Chat.findOneAndDelete({ id, userId });
@@ -187,4 +186,3 @@ const chatController = {
 };
 
 export default chatController;
-

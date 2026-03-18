@@ -42,7 +42,9 @@ const authController = {
     req.logout((err) => {
       if (err) return next(err);
       // express-session augments req.session with .destroy()
-      const s = (req as Request & { session: { destroy: (cb: () => void) => void } }).session;
+      const s = (
+        req as Request & { session: { destroy: (cb: () => void) => void } }
+      ).session;
       s.destroy(() => {
         res.json({ success: true });
       });
@@ -51,4 +53,3 @@ const authController = {
 };
 
 export default authController;
-
