@@ -1,4 +1,5 @@
-import express, { Express, Request, Response, NextFunction } from 'express';
+import express from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import compression from 'compression';
@@ -12,7 +13,7 @@ import authRoutes from './routes/authRoutes.js';
 
 dotenv.config();
 
-const app: Express = express();
+const app = express();
 
 app.set('trust proxy', 1);
 
