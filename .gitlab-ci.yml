@@ -54,7 +54,6 @@ build_images:
     - docker push $DOCKER_IMAGE_FRONTEND
   only:
     - dev
-    - develop
     - main
 
 deploy_to_server:
