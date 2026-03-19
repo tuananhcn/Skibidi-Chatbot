@@ -1,11 +1,11 @@
-node_modules
+**/node_modules
+**/dist
+**/build
+**/.next
+**/.vercel
 .git
 .gitignore
 *.log
-dist
-build
-.next
-.vercel
 .env
 .env.*
 README.md
