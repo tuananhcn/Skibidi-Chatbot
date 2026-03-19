@@ -53,6 +53,7 @@ build_images:
     - docker push $DOCKER_IMAGE_BACKEND
     - docker push $DOCKER_IMAGE_FRONTEND
   only:
+    - dev
     - develop
     - main
 
@@ -69,4 +70,4 @@ deploy_to_server:
   script:
     - ssh $SERVER_USER@$SERVER_IP "cd /app/chatbot && docker compose pull && docker compose up -d"
   only:
-    - develop
+    - dev
