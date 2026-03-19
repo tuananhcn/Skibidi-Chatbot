@@ -1,0 +1,54 @@
+image: node:20-alpine
+
+variables:
+  PNPM_CACHE_DIR: .pnpm-store
+
+cache:
+  key:
+    files:
+      - pnpm-lock.yaml
+  paths:
+    - .pnpm-store
+    - node_modules/
+    - backend/node_modules/
+    - client/node_modules/
+
+stages:
+  - install
+  - lint
+  - build
+
+install_dependencies:
+  stage: install
+  script:
+    - corepack enable
+    - corepack prepare pnpm@latest --activate
+    - pnpm config set store-dir $PNPM_CACHE_DIR
+    - pnpm install --frozen-lockfile
+  artifacts:
+    paths:
+      - node_modules/
+      - backend/node_modules/
+      - client/node_modules/
+
+linting:
+  stage: lint
+  script:
+    - corepack enable
+    - corepack prepare pnpm@latest --activate
+    - pnpm lint
+  dependencies:
+    - install_dependencies
+
+building:
+  stage: build
+  script:
+    - corepack enable
+    - corepack prepare pnpm@latest --activate
+    - pnpm build
+  dependencies:
+    - install_dependencies
+  artifacts:
+    paths:
+      - backend/dist/
+      - client/dist/
