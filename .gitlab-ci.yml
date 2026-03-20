@@ -1,3 +1,13 @@
+stages:
+  - test
+
+create_file:
+  stage: test
+  tags:
+    - intern
+  script:
+    - echo "Building..."
+
 # image: node:20-alpine
 
 # variables:
@@ -70,6 +80,3 @@
 #     - ssh $SERVER_USER@$SERVER_IP "cd /app/chatbot && docker compose pull && docker compose up -d"
 #   only:
 #     - dev
-create_file:
-  script:
-  - echo "Buiding ..."
