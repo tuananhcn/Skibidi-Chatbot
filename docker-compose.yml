@@ -4,8 +4,7 @@ services:
     build:
       context: .
       target: backend
-    ports:
-      - "3000:3000"
+    # Removed port 3000 mapping from host (Nginx will proxy internal traffic)
     environment:
       - NODE_ENV=production
       - PORT=3000

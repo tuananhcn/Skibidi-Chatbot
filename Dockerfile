@@ -31,5 +31,7 @@ CMD ["pnpm", "start"]
 # Stage 5: Frontend Production Image (Nginx)
 FROM nginx:stable-alpine AS frontend
 COPY --from=builder /app/client/dist /usr/share/nginx/html
+# Use custom Nginx config for SPA routing and API proxying
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
