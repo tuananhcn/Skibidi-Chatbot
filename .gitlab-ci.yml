@@ -45,7 +45,7 @@ build_images:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
     - docker build --target backend -t $DOCKER_IMAGE_BACKEND .
-    - docker build --target frontend -t $DOCKER_IMAGE_FRONTEND .
+    - docker build --target frontend --build-arg VITE_API_URL=$VITE_API_URL -t $DOCKER_IMAGE_FRONTEND .
     - docker push $DOCKER_IMAGE_BACKEND
     - docker push $DOCKER_IMAGE_FRONTEND
   only:
