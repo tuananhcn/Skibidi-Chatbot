@@ -14,10 +14,10 @@ if (!apiKey) {
 const openai = new OpenAI({
   baseURL: 'https://openrouter.ai/api/v1',
   apiKey: apiKey || 'missing-key',
-  defaultHeaders: {
-    'HTTP-Referer': 'https://github.com/internahv/tuanna2003/chatbot',
-    'X-Title': 'Vivid Chatbot',
-  },
+  // defaultHeaders: {
+  //   'HTTP-Referer': 'https://github.com/internahv/tuanna2003/chatbot',
+  //   'X-Title': 'Vivid Chatbot',
+  // },
 });
 
 export default openai;
