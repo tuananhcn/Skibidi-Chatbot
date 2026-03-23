@@ -4,6 +4,7 @@ export interface IMessage {
   id: string;
   role: 'user' | 'assistant';
   content: string;
+  reasoning_details?: any;
 }
 
 export interface IChat extends Document {

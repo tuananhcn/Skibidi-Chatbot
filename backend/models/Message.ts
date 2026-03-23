@@ -17,6 +17,10 @@ export const MessageSchema = new Schema(
       type: String,
       required: true,
     },
+    reasoning_details: {
+      type: Schema.Types.Mixed,
+      default: null,
+    },
   },
   { _id: false }
 );
