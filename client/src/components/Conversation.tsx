@@ -60,12 +60,11 @@ const Conversation = ({ chat }: ConversationProps) => {
                   <div className="markdown-prose">
                     <ReactMarkdown
                       remarkPlugins={[remarkGfm]}
+                      /* eslint-disable @typescript-eslint/no-explicit-any, react/prop-types, @typescript-eslint/no-unused-vars */
                       components={{
                         code({ className, children, ...props }) {
                           const match = /language-(\w+)/.exec(className || '');
                           const isInline = !match;
-                          // Omit ref and other problematic props that cause TS errors in build
-                          // eslint-disable-next-line @typescript-eslint/no-unused-vars
                           const { ref, ...rest } = props as any;
                           const Highlighter = SyntaxHighlighter as any;
 
@@ -85,6 +84,7 @@ const Conversation = ({ chat }: ConversationProps) => {
                           );
                         },
                       }}
+                      /* eslint-enable @typescript-eslint/no-explicit-any, react/prop-types */
                     >
                       {message.content}
                     </ReactMarkdown>
