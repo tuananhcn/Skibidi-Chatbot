@@ -64,18 +64,22 @@ const Conversation = ({ chat }: ConversationProps) => {
                         code({ className, children, ...props }) {
                           const match = /language-(\w+)/.exec(className || '');
                           const isInline = !match;
+                          // Omit ref and other problematic props that cause TS errors in build
+                          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                          const { ref, ...rest } = props as any;
+                          const Highlighter = SyntaxHighlighter as any;
+
                           return !isInline ? (
-                            <SyntaxHighlighter
-                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            <Highlighter
                               style={theme as any}
                               language={match[1]}
                               PreTag="div"
-                              {...props}
+                              {...rest}
                             >
                               {String(children).replace(/\n$/, '')}
-                            </SyntaxHighlighter>
+                            </Highlighter>
                           ) : (
-                            <code className={className} {...props}>
+                            <code className={className} {...rest}>
                               {children}
                             </code>
                           );
