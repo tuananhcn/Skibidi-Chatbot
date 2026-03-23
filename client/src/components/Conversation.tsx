@@ -1,4 +1,8 @@
-import { useLayoutEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { atomDark as theme } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import type { Message } from '@src/types/chat';
 import '@src/styles/Conversation.css';
 
@@ -8,12 +12,14 @@ interface ConversationProps {
 
 const Conversation = ({ chat }: ConversationProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  useLayoutEffect(() => {
-    const container = containerRef.current;
-    if (container) {
-      container.scrollTop = container.scrollHeight;
-    }
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
   }, [chat]);
 
   return (
@@ -52,17 +58,36 @@ const Conversation = ({ chat }: ConversationProps) => {
                   </span>
                 ) : (
                   <div className="markdown-prose">
-                    {message.content.split('\n').map((line, i) => (
-                      <span key={i}>
-                        {line}
-                        <br />
-                      </span>
-                    ))}
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        code({ inline, className, children, ...props }: any) {
+                          const match = /language-(\w+)/.exec(className || '');
+                          return !inline && match ? (
+                            <SyntaxHighlighter
+                              style={theme as any}
+                              language={match[1]}
+                              PreTag="div"
+                              {...props}
+                            >
+                              {String(children).replace(/\n$/, '')}
+                            </SyntaxHighlighter>
+                          ) : (
+                            <code className={className} {...props}>
+                              {children}
+                            </code>
+                          );
+                        },
+                      }}
+                    >
+                      {message.content}
+                    </ReactMarkdown>
                   </div>
                 )}
               </div>
             </li>
           ))}
+          <div ref={messagesEndRef} />
         </ul>
       </div>
     </div>

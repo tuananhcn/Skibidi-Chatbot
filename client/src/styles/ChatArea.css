@@ -14,7 +14,7 @@
 
 @media (max-width: 768px) {
   .chat-area-head {
-    left: var(--content-padding-mobile);
+    padding: 1rem 0 0.5rem var(--content-padding-mobile);
     gap: 1rem;
     font-size: clamp(1.2rem, 5vw, 1.5rem);
   }
@@ -47,10 +47,7 @@
   width: 85%;
   max-width: 900px;
   min-width: 300px;
-  position: absolute;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
+  margin: 2.5rem auto 0.5rem auto;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -59,7 +56,7 @@
   border-radius: 9999px;
   padding: 0.45rem 0.55rem 0.45rem 0.75rem;
   transition: box-shadow 0.2s ease;
-  z-index: 20;
+  flex-shrink: 0;
 }
 
 .input-container:focus-within {

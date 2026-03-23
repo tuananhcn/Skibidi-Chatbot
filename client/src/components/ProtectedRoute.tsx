@@ -1,5 +1,5 @@
 import { useAuth } from '@src/context/AuthContext';
-import LoginPage from './LoginPage';
+import { Navigate } from 'react-router-dom';
 import type { ReactNode } from 'react';
 
 interface ProtectedRouteProps {
@@ -18,7 +18,7 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   }
 
   if (!user) {
-    return <LoginPage />;
+    return <Navigate to="/login" replace />;
   }
 
   return <>{children}</>;

@@ -121,10 +121,32 @@ const MainApp = () => {
   );
 };
 
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import LoginPage from '@src/components/LoginPage';
+import NotFound from '@src/components/NotFound';
+
 const App = () => (
-  <AuthProvider>
-    <MainApp />
-  </AuthProvider>
+  <BrowserRouter>
+    <AuthProvider>
+      <Routes>
+        {/* Main Application (Protected) */}
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <MainApp />
+            </ProtectedRoute>
+          }
+        />
+        
+        {/* Login Page */}
+        <Route path="/login" element={<LoginPage />} />
+
+        {/* 404 Not Found (Catch-all) */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </AuthProvider>
+  </BrowserRouter>
 );
 
 export default App;
