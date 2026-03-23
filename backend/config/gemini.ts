@@ -11,9 +11,9 @@ if (!apiKey) {
 
 const genAI = new GoogleGenerativeAI(apiKey || 'missing-key');
 
-// Use gemini-1.5-flash-latest for the best free-tier stability
+// Use 'gemini-1.5-flash-latest' for the best free-tier stability
 export const model = genAI.getGenerativeModel({
-  model: 'gemini-1.5-flash',
+  model: 'gemini-2.5-flash-lite',
 });
 
 export default genAI;
