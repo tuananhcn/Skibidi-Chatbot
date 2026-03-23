@@ -17,6 +17,7 @@ const openai = new OpenAI({
   // defaultHeaders: {
   //   'HTTP-Referer': 'https://github.com/internahv/tuanna2003/chatbot',
   //   'X-Title': 'Vivid Chatbot',
+  //   Authorization: `Bearer ${apiKey}`, // Explicit injection for production stability
   // },
 });
 
