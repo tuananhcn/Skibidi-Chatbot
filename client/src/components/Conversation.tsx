@@ -61,10 +61,12 @@ const Conversation = ({ chat }: ConversationProps) => {
                     <ReactMarkdown
                       remarkPlugins={[remarkGfm]}
                       components={{
-                        code({ inline, className, children, ...props }: any) {
+                        code({ className, children, ...props }) {
                           const match = /language-(\w+)/.exec(className || '');
-                          return !inline && match ? (
+                          const isInline = !match;
+                          return !isInline ? (
                             <SyntaxHighlighter
+                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
                               style={theme as any}
                               language={match[1]}
                               PreTag="div"

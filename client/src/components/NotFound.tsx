@@ -10,7 +10,7 @@ const NotFound = () => {
         <h1 style={{ fontSize: '4rem', marginBottom: '1rem', color: '#ffffff' }}>404</h1>
         <h2 style={{ marginBottom: '2rem', color: 'rgba(255,255,255,0.7)' }}>Page Not Found</h2>
         <p style={{ marginBottom: '2rem', color: 'rgba(255,255,255,0.5)' }}>
-          The path you are looking for doesn't exist or has been moved.
+          The path you are looking for doesn&apos;t exist or has been moved.
         </p>
         <button 
           className="send-button" 
