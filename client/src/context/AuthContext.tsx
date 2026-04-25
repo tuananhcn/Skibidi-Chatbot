@@ -35,6 +35,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = useCallback(async () => {
     await authService.logout();
+    sessionStorage.clear(); // Clear cached chat data
     setUser(null);
   }, []);
 

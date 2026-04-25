@@ -2,6 +2,8 @@ image: node:20-alpine
 
 variables:
   PNPM_CACHE_DIR: .pnpm-store
+  DOCKER_IMAGE_BACKEND: $CI_REGISTRY_IMAGE/backend:$CI_COMMIT_REF_SLUG
+  DOCKER_IMAGE_FRONTEND: $CI_REGISTRY_IMAGE/frontend:$CI_COMMIT_REF_SLUG
 
 cache:
   key:
@@ -10,45 +12,59 @@ cache:
   paths:
     - .pnpm-store
     - node_modules/
-    - backend/node_modules/
-    - client/node_modules/
 
 stages:
   - install
   - lint
-  - build
+  - build_docker
+  - deploy
 
 install_dependencies:
   stage: install
+  image: node:20-slim
   script:
     - corepack enable
-    - corepack prepare pnpm@latest --activate
-    - pnpm config set store-dir $PNPM_CACHE_DIR
-    - pnpm install --frozen-lockfile
+    - pnpm install --no-frozen-lockfile
   artifacts:
     paths:
       - node_modules/
-      - backend/node_modules/
-      - client/node_modules/
 
 linting:
   stage: lint
+  image: node:20-slim
   script:
     - corepack enable
-    - corepack prepare pnpm@latest --activate
     - pnpm lint
   dependencies:
     - install_dependencies
 
-building:
-  stage: build
+build_images:
+  stage: build_docker
+  image: docker:latest
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - corepack enable
-    - corepack prepare pnpm@latest --activate
-    - pnpm build
-  dependencies:
-    - install_dependencies
-  artifacts:
-    paths:
-      - backend/dist/
-      - client/dist/
+    - docker build --target backend -t $DOCKER_IMAGE_BACKEND .
+    - docker build --target frontend --build-arg VITE_API_URL=$VITE_API_URL -t $DOCKER_IMAGE_FRONTEND .
+    - docker push $DOCKER_IMAGE_BACKEND
+    - docker push $DOCKER_IMAGE_FRONTEND
+  only:
+    - dev
+    - main
+
+deploy_to_server:
+  stage: deploy
+  image: docker:latest
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    # Use the images we just pushed to the registry
+    - docker pull $DOCKER_IMAGE_BACKEND
+    - docker pull $DOCKER_IMAGE_FRONTEND
+    # Stop the old ones and start the new ones
+    - docker compose down --remove-orphans || true
+    - docker compose up -d
+  only:
+    - dev
+
+

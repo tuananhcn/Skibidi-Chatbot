@@ -112,6 +112,7 @@
   background-color: var(--main-background);
   min-height: 100vh;
   transition: margin-left var(--transition-speed) ease;
+  padding-bottom: 0.5rem;
 }
 
 @media (max-width: 768px) {

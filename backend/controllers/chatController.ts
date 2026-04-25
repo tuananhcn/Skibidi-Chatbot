@@ -6,7 +6,7 @@ import { nanoid } from 'nanoid';
 import { IMessage } from '../types/chat.js';
 import { IUser } from '../types/user.js';
 import Chat from '../models/Chat.js';
-import { model as geminiModel } from '../config/gemini.js';
+import openai from '../config/openai.js';
 
 const getUserId = (req: express.Request): string | null => {
   const q = req as any;
@@ -89,41 +89,51 @@ const chatController = {
         content: msg.content,
       }));
 
-      // Generate assistant response via Gemini
+      // Generate assistant response via OpenRouter (OpenAI SDK)
       try {
-        // Map history to Gemini format (user/model)
-        // Gemini expects 'user' and 'model' (not assistant)
+        // Map history to OpenAI format with reasoning preservation
         const history = messagesForAssistant.slice(0, -1).map((m: any) => ({
-          role: m.role === 'assistant' ? 'model' : 'user',
-          parts: [{ text: m.content }],
+          role: m.role,
+          content: m.content,
+          reasoning_details: m.reasoning_details, // Preserve for multi-turn reasoning
         }));
 
-        const chatSession = geminiModel.startChat({
-          history: history,
+        history.push({
+          role: 'user',
+          content: prompt,
         });
 
-        const result = await chatSession.sendMessage(prompt);
-        const responseText = result.response.text();
+        // Use reasoning: { enabled: true } as per OpenRouter quickstart
+        const response: any = await openai.chat.completions.create({
+          model: 'stepfun/step-3.5-flash:free',
+          messages: history as any,
+          reasoning: { enabled: true },
+        } as any);
+
+        const responseMessage = response.choices[0]?.message;
+        const responseText = responseMessage?.content;
+        const reasoningDetails = responseMessage?.reasoning_details;
 
         if (!responseText) {
-          throw new Error('(Server) No response from Gemini.');
+          throw new Error('(Server) No response from OpenRouter.');
         }
 
         const assistantMessage: IMessage = {
           id: nanoid(),
           role: 'assistant',
           content: responseText,
+          reasoning_details: reasoningDetails,
         };
 
         chatDoc.messages.push(assistantMessage);
         await chatDoc.save();
 
         return s.json({ chat: chatDoc });
-      } catch (geminiError: any) {
-        console.error('(Server) Gemini API error:', geminiError);
+      } catch (openaiError: any) {
+        console.error('(Server) OpenRouter API error:', openaiError);
 
         const errorMessage =
-          geminiError.message ||
+          openaiError.message ||
           'Failed to generate AI response. Please try again.';
 
         const errorAssistantMessage: IMessage = {

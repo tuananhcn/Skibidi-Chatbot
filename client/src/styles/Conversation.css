@@ -1,8 +1,7 @@
 /* Conversation container */
 .conversation-container {
   width: 100%;
-  height: calc(100vh - 120px);
-  margin-top: 4rem;
+  flex: 1;
   overflow-y: auto;
   scroll-behavior: smooth;
   display: flex;
@@ -170,4 +169,66 @@
   40% {
     opacity: 1;
   }
+}
+
+/* Markdown Rendering Styles */
+.markdown-prose {
+  width: 100%;
+}
+
+.markdown-prose h1, .markdown-prose h2, .markdown-prose h3 {
+  margin: 1.5rem 0 0.5rem 0;
+  color: #ececec;
+  font-weight: 600;
+}
+
+.markdown-prose h1 { font-size: 1.4rem; }
+.markdown-prose h2 { font-size: 1.25rem; }
+.markdown-prose h3 { font-size: 1.1rem; }
+
+.markdown-prose ul {
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+}
+
+.markdown-prose li {
+  margin-bottom: 0.5rem;
+}
+
+.markdown-prose code {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: 'Fira Code', 'Courier New', monospace;
+  font-size: 0.9em;
+}
+
+/* Code Blocks */
+.code-block-wrapper {
+  margin: 1rem 0;
+  background-color: #1a1a1a;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.code-block-wrapper pre {
+  margin: 0;
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+.code-block-wrapper code {
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+  display: block;
+  white-space: pre;
+  color: #dcdcdc;
+}
+
+.markdown-prose hr {
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin: 1.5rem 0;
 }

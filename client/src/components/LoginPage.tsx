@@ -7,25 +7,17 @@ const LoginPage = () => {
     <div className="login-page">
       <div className="login-card">
         <div className="login-logo">
-          <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-            <circle cx="20" cy="20" r="20" fill="white" fillOpacity="0.08" />
-            <path
-              d="M20 10 C14.477 10 10 14.477 10 20 C10 25.523 14.477 30 20 30 C25.523 30 30 25.523 30 20 C30 14.477 25.523 10 20 10Z"
-              fill="none"
-              stroke="white"
-              strokeOpacity="0.6"
-              strokeWidth="1.5"
-            />
-            <path
-              d="M20 14 L22.5 19 L28 19.5 L24 23.5 L25.5 29 L20 26 L14.5 29 L16 23.5 L12 19.5 L17.5 19 Z"
-              fill="white"
-              fillOpacity="0.9"
-            />
+          <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="11" width="18" height="10" rx="2" />
+            <circle cx="12" cy="5" r="2" />
+            <path d="M12 7v4" />
+            <line x1="8" y1="16" x2="8" y2="16" />
+            <line x1="16" y1="16" x2="16" y2="16" />
           </svg>
         </div>
 
         <h1 className="login-title">Welcome back</h1>
-        <p className="login-subtitle">Sign in to continue to Jawuan GPT</p>
+        <p className="login-subtitle">Sign in to continue to use Chatbot</p>
 
         <a
           href={`${apiUrl}/api/auth/google`}

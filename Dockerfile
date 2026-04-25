@@ -14,7 +14,9 @@ RUN pnpm install --no-frozen-lockfile
 # Stage 3: Build
 FROM deps AS builder
 COPY . .
-# Run build with filter to pinpoint errors and get more output
+# Pass the production API URL during build so Vite can "bake" it in
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
 RUN pnpm run build
 
 # Stage 4: Backend Production Image
@@ -29,5 +31,7 @@ CMD ["pnpm", "start"]
 # Stage 5: Frontend Production Image (Nginx)
 FROM nginx:stable-alpine AS frontend
 COPY --from=builder /app/client/dist /usr/share/nginx/html
+# Use custom Nginx config for SPA routing and API proxying
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

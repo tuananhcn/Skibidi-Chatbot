@@ -1,24 +1,28 @@
 services:
   backend:
+    image: ${DOCKER_IMAGE_BACKEND:-chatbot-backend:latest}
     build:
       context: .
       target: backend
-    ports:
-      - "3000:3000"
-    env_file:
-      - ./backend/.env
+    # Removed port 3000 mapping from host (Nginx will proxy internal traffic)
     environment:
       - NODE_ENV=production
+      - PORT=3000
+      - MONGO_URI=${MONGO_URI}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - SESSION_SECRET=${SESSION_SECRET}
+      - BACKEND_URL=${BACKEND_URL}
     restart: always
 
   frontend:
+    image: ${DOCKER_IMAGE_FRONTEND:-chatbot-frontend:latest}
     build:
       context: .
       target: frontend
     ports:
       - "80:80"
-    env_file:
-      - ./client/.env
     depends_on:
       - backend
     restart: always

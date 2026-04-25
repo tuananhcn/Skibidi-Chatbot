@@ -145,7 +145,8 @@ app.use(
 // Application is ready (Middleware handles connectDB)
 
 // Only listen locally, Vercel Serverless handles its own listening
-if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+// if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+if (!process.env.VERCEL) {
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
